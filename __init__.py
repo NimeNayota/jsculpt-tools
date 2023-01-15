@@ -1,5 +1,5 @@
 bl_info = {
-    "name" : "JSculpt Tools",
+    "name" : "JSculpt Tools+",
     "author" : "jayanam",
     "description" : "Sculpting tools for Blender 2.8 - 3.x",
     "blender" : (2, 80, 0),
@@ -80,12 +80,31 @@ bpy.types.Scene.add_retopo_mirror = bpy.props.EnumProperty(items=add_object_mirr
 add_object_types = [ ("Sphere",    "Sphere",   "", 0),
                      ("Plane",     "Plane",    "", 1),
                      ("Cube",      "Cube",     "", 2),
-                     ("Cylinder",  "Cylinder", "", 3),
-                     ("Torus",     "Torus",    "", 4),
-                     ("Cone",      "Cone",     "", 5),
-                     ("Icosphere", "Icosphere","", 6),
-                     ("Scene",     "Scene",    "", 7),      
+                     ("Cube2",      "Cube2",     "", 3),
+                     ("Cylinder",  "Cylinder", "", 4),
+                     ("Cylinderx3",  "Cylinderx3", "", 5),
+                     ("Cylinderx6",  "Cylinderx6", "", 6),
+                     ("Torus",     "Torus",    "", 7),
+                     ("TorusX2",     "TorusX2",    "", 8),
+                     ("TorusX6",     "TorusX6",    "", 9),
+                     ("Cone",      "Cone",     "", 10),
+                     ("Conex4",      "Conex4",     "", 11),
+                     ("Icosphere", "Icosphere","", 12),
+                     ("Scene",     "Scene",    "", 13),      
                   ]
+
+
+add_object_sizes = [ ("0.1",    "0.1",   "", 0),
+                     ("0.2",     "0.2",    "", 1),
+                     ("0.3",      "0.3",     "", 2),
+                     ("0.4",  "0.4", "", 3),
+                     ("0.5",     "0.5",    "", 4),
+                     ("0.6",      "0.6",     "", 5),
+                     ("0.8", "0.8","", 6),
+                     ("1",     "1",    "", 7),
+                     ("1.4",     "1.4",    "", 8),      
+                  ]
+
 
 # Scene properties
 bpy.types.WindowManager.in_draw_mode = BoolProperty(name="Draw Mode", default = False)
@@ -93,6 +112,10 @@ bpy.types.WindowManager.in_draw_mode = BoolProperty(name="Draw Mode", default = 
 bpy.types.Scene.add_object_type = bpy.props.EnumProperty(items=add_object_types, 
                                                         name="Add Object",
                                                         default="Sphere")
+
+bpy.types.Scene.add_object_size = bpy.props.EnumProperty(items=add_object_sizes, 
+                                                        name="Add Size",
+                                                        default="1.4")
 
 bpy.types.Scene.add_object_mirror = bpy.props.EnumProperty(items=add_object_mirror, 
                                                         name="Add Object Mirror",
