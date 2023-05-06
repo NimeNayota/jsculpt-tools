@@ -11,6 +11,23 @@ class FSC_PT_Panel(Panel):
     def draw(self, context):
         pass
 
+class FSC_PT_Bool_Objects_Panel(FSC_PT_Panel, Panel):
+    bl_parent_id = "FSC_PT_Panel"
+    bl_label = "Bool objects"
+    
+    def draw(self, context): 
+
+        layout = self.layout
+
+        row = layout.row()
+        row.prop_search(context.scene, "target_object", context.scene, "objects", text="Target")
+
+        row = layout.row()
+        row.operator('object.fsc_bool_union', text='Bool Union')
+
+        row = layout.row()
+        row.operator('object.fsc_bool_diff', text='Bool Difference')
+
 class FSC_PT_Add_Objects_Panel(Panel):
     bl_parent_id = "FSC_PT_Panel"
     bl_label = "Objects"
@@ -37,7 +54,13 @@ class FSC_PT_Add_Objects_Panel(Panel):
         row.operator('object.fsc_add_object', text="Add object mode")
 
         row = layout.row()
+        row.prop(context.scene, "add_dub", text="dub")
+
+        row = layout.row()
         row.prop(context.scene, "add_object_size", text="Size")
+        
+        col = layout.column()
+        col.prop(context.scene, "add_object_size_col", text="Size")
 
 class FSC_PT_Extract_Mask_Panel(Panel):
     bl_parent_id = "FSC_PT_Panel"
@@ -72,6 +95,9 @@ class FSC_PT_Remesh_Panel(Panel):
     def draw(self, context): 
 
         layout = self.layout
+
+        row = layout.row()
+        row.prop(context.scene, "remesh_after_union", text="Remesh after union")
 
         row = layout.row()
         row.prop(context.scene, "remesh_after_extract", text="Remesh after extract")
@@ -117,16 +143,16 @@ class FSC_PT_Retopo_Panel(Panel):
 
         row = layout.row()
         col = row.column()
-        col.operator('mesh.fsc_flipnormals', text="", icon="ORIENTATION_NORMAL")
+        col.operator('mesh.fsc_flipnormals', text="E", icon="ORIENTATION_NORMAL")
 
         col = row.column()
-        col.operator('object.fsc_subsurf', text="", icon="MOD_SUBSURF")
+        col.operator('object.fsc_subsurf', text="SS", icon="MOD_SUBSURF")
 
         col = row.column()
-        col.operator('object.fsc_shrinkwrap', text="", icon="MOD_SHRINKWRAP")
+        col.operator('object.fsc_shrinkwrap', text="SP", icon="MOD_SHRINKWRAP")
 
         col = row.column()
-        col.operator('object.fsc_solidify', text="", icon="MOD_SOLIDIFY")
+        col.operator('object.fsc_solidify', text="SF", icon="MOD_SOLIDIFY")
 
         col = row.column()
-        col.operator('object.fsc_apply_all_mod_op', text="", icon="NLA_PUSHDOWN")      
+        col.operator('object.fsc_apply_all_mod_op', text="AR", icon="NLA_PUSHDOWN")      

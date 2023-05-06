@@ -313,10 +313,11 @@ class FSC_OT_Retopo_Ring_Operator(FSC_OT_Draw_Base_Operator):
         xt = int(region.width / 2.0)
 
         # Draw text for draw mode
-        blf.size(0, 22, 72)
+        blf.size(0, 20, 31)
         blf.color(0, 1, 1, 1, 1)
 
-        blf.size(1, 16, 72)
+
+        blf.size(1, 16, 31)
         blf.color(1, 1, 1, 1, 1)
 
         title = "- Retopo Ring Mesh -"
