@@ -11,10 +11,12 @@ from . utils.fsc_select_mode_utils import *
 
 from . utils.fsc_common_utils import get_axis_no
 
+from . utils.textutils import *
+
+
 class FSC_OT_Add_Oject_Operator(Operator):
     bl_idname = "object.fsc_add_object"
     bl_label = "Add object"
-    bl_label = "Add size"
     bl_description = "Add object in sculpt mode" 
     bl_options = {'REGISTER', 'UNDO'} 
 
@@ -48,8 +50,8 @@ class FSC_OT_Add_Oject_Operator(Operator):
         text = "Ctrl + Left Click = Add | Esc = Exit"
 
         blf.color(1, 1, 1, 1, 1)
-        blf.size(0, 20, 31)
-        blf.size(1, 16, 31)
+        blf_set_size(0, 20)
+        blf_set_size(1, 16)
 
         region = context.region
         xt = int(region.width / 2.0)
@@ -125,55 +127,36 @@ class FSC_OT_Add_Oject_Operator(Operator):
                 rot = z.rotation_difference( norm ).to_euler()
 
         obj_type = context.scene.add_object_type
-        size_obj = context.scene.add_object_size
+        #size object
+        sezex = bpy.context.scene.tool_settings.unified_paint_settings.size*0.003
+        #   color color attribute add
+        r = bpy.data.brushes["PaintSH"].color.r 
+        g = bpy.data.brushes["PaintSH"].color.g 
+        b = bpy.data.brushes["PaintSH"].color.b 
       
         # TODO: Add more init options here
-        if size_obj == "0.1":
-            sizee = 0.1
-        if size_obj == "0.2":
-            sizee = 0.2
-        elif size_obj == "0.3":  
-            sizee = 0.3
-        elif size_obj == "0.4":
-            sizee = 0.4
-        elif size_obj == "0.5":
-            sizee = 0.5
-        elif size_obj == "0.6":
-            sizee = 0.6
-        elif size_obj == "0.8":
-            sizee = 0.8
-        elif size_obj == "1":
-            sizee = 1
-        elif size_obj == "1.4":
-            sizee = 1.4
-        
         if obj_type == "Sphere":
-            bpy.ops.mesh.primitive_uv_sphere_add(radius=sizee, enter_editmode=False, location=loc)
+            bpy.ops.mesh.primitive_uv_sphere_add(radius=sezex, enter_editmode=False, location=loc)
+            bpy.ops.geometry.color_attribute_add(color=(r, g, b, 1))
         if obj_type == "Plane":
-            bpy.ops.mesh.primitive_plane_add(size=sizee, enter_editmode=False, location=loc, rotation=rot)
+            bpy.ops.mesh.primitive_plane_add(size=sezex*2, enter_editmode=False, location=loc, rotation=rot)
+            bpy.ops.geometry.color_attribute_add(color=(r, g, b, 1))
         elif obj_type == "Cube":  
-            bpy.ops.mesh.primitive_cube_add(size=sizee, enter_editmode=False, location=loc, rotation=rot)
-        elif obj_type == "Cube2":  
-            bpy.ops.mesh.primitive_cube_add(size=sizee * 0.5, enter_editmode=False, location=loc, rotation=rot)
+            bpy.ops.mesh.primitive_cube_add(size=sezex, enter_editmode=False, location=loc, rotation=rot)
+            bpy.ops.geometry.color_attribute_add(color=(r, g, b, 1))
         elif obj_type == "Cylinder":
-            bpy.ops.mesh.primitive_cylinder_add(radius=sizee, depth=sizee, enter_editmode=False, location=loc, rotation=rot)
-        elif obj_type == "Cylinderx3":
-            bpy.ops.mesh.primitive_cylinder_add(radius=sizee, depth=sizee * 3, enter_editmode=False, location=loc, rotation=rot)
-        elif obj_type == "Cylinderx6":
-            bpy.ops.mesh.primitive_cylinder_add(radius=sizee, depth=sizee * 6, enter_editmode=False, location=loc, rotation=rot)
+            bpy.ops.mesh.primitive_cylinder_add(radius=sezex, depth=sezex*2, enter_editmode=False, location=loc, rotation=rot)
+            bpy.ops.geometry.color_attribute_add(color=(r, g, b, 1))
         elif obj_type == "Torus":
-            bpy.ops.mesh.primitive_torus_add(align='WORLD', location=loc, rotation=rot, major_radius=sizee, minor_radius=sizee * 0.25, abso_major_rad=sizee, abso_minor_rad=sizee * 0.75)
-        elif obj_type == "TorusX2":
-            bpy.ops.mesh.primitive_torus_add(align='WORLD', location=loc, rotation=rot, major_radius=sizee, minor_radius=sizee * 0.5, abso_major_rad=sizee, abso_minor_rad=sizee * 1.5)
-        elif obj_type == "TorusX6":
-            bpy.ops.mesh.primitive_torus_add(align='WORLD', location=loc, rotation=rot, major_radius=sizee, minor_radius=sizee * 0.9, abso_major_rad=sizee, abso_minor_rad=sizee * 2.8)
+            bpy.ops.mesh.primitive_torus_add(align='WORLD', location=loc, rotation=rot, major_radius=sezex, minor_radius=sezex*0.25, abso_major_rad=sezex*1.25, abso_minor_rad=sezex*0.75)
+            bpy.ops.geometry.color_attribute_add(color=(r, g, b, 1))
         elif obj_type == "Cone":
-            bpy.ops.mesh.primitive_cone_add(radius1=sizee, radius2=0, depth=sizee, enter_editmode=False, location=loc, rotation=rot)
-        elif obj_type == "Conex4":
-            bpy.ops.mesh.primitive_cone_add(radius1=sizee, radius2=0, depth=sizee * 4, enter_editmode=False, location=loc, rotation=rot)
+            bpy.ops.mesh.primitive_cone_add(radius1=sezex, radius2=0, depth=sezex*2, enter_editmode=False, location=loc, rotation=rot)
+            bpy.ops.geometry.color_attribute_add(color=(r, g, b, 1))
         elif obj_type == "Icosphere":
-            bpy.ops.mesh.primitive_ico_sphere_add(radius=sizee, enter_editmode=False, location=loc, rotation=rot)
-        
+            bpy.ops.mesh.primitive_ico_sphere_add(radius=sezex, enter_editmode=False, location=loc, rotation=rot)
+            bpy.ops.geometry.color_attribute_add(color=(r, g, b, 1))
+ 
         elif obj_type == "Scene":
             custom_obj = context.scene.add_scene_object
             if custom_obj:
@@ -181,6 +164,7 @@ class FSC_OT_Add_Oject_Operator(Operator):
                 deselect_all()
                 make_active(custom_obj)
 
+                bpy.ops.geometry.color_attribute_add(color=(r, g, b, 1))
                 bpy.ops.object.duplicate(linked=True)
                 clone_custom = bpy.context.view_layer.objects.active
                 bpy.ops.object.make_single_user(object=True, obdata=True)

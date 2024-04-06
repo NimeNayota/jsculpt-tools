@@ -24,10 +24,15 @@ class FSC_OT_Mask_Extract_Operator(Operator):
     bl_label = "Extract mask"
     bl_description = "Extract a mask as mesh" 
     bl_options = {'REGISTER', 'UNDO'} 
-    
+
+
     def invoke(self, context, event):
 
         target_obj = context.object
+
+        r = bpy.data.brushes["PaintSH"].color.r 
+        g = bpy.data.brushes["PaintSH"].color.g 
+        b = bpy.data.brushes["PaintSH"].color.b 
 
         to_sculpt()
 
@@ -46,6 +51,7 @@ class FSC_OT_Mask_Extract_Operator(Operator):
         # get the new created/separated object
         new_objs = [obj for obj in bpy.context.selected_objects if obj != bpy.context.object]
         new_obj = new_objs[0]
+        
 
         # unhide the target and get rid of the mask
         to_sculpt()
@@ -59,6 +65,9 @@ class FSC_OT_Mask_Extract_Operator(Operator):
         solid_mod.offset = context.scene.extract_offset
         solid_mod.use_even_offset = True
         solid_mod.use_quality_normals = True
+        bpy.ops.geometry.color_attribute_remove()
+        bpy.ops.geometry.color_attribute_add(color=(r, g, b, 1))
+
 
         # Control the thickness with a scene variable
         solid_mod.thickness = context.scene.extract_thickness
@@ -68,6 +77,8 @@ class FSC_OT_Mask_Extract_Operator(Operator):
 
         if context.scene.remesh_after_extract:
             execute_remesh(context)
+            bpy.ops.geometry.color_attribute_remove()
+            bpy.ops.geometry.color_attribute_add(color=(r, g, b, 1))
 
         self.report({'INFO'}, "Mask extracted")
         return {'FINISHED'}
