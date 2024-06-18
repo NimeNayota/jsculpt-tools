@@ -20,5 +20,9 @@ Move the gizmo with one button. Clears mask, inverts mask, switches to transform
 [Kazam_screencast_00017.webm](https://github.com/NimeNayota/jsculpt-tools/assets/118754270/f929062c-1cbd-4ce4-88b0-7fc537ae220b)
 
 
+Apply. Passes modifier symmetry settings to the brush
+[Kazam_screencast_00020.webm](https://github.com/NimeNayota/jsculpt-tools/assets/118754270/1393dd8d-5d41-4888-bca8-24a687b2adbc)
+
+
 
 P.S. This is a modified version of the JSculpt tools addon from Mr. Jayanam. Without him there would not have been this version, for which many thanks Mr. Jayanam.
