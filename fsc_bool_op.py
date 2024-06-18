@@ -13,9 +13,11 @@ class FSC_OT_BoolOperator_Union(Operator):
     def poll(cls, context):
         return check_cutter_selected(context)
 
+
     def invoke(self, context, event):
 
         target_obj = bpy.context.scene.target_object
+        
 
         execute_boolean_op(context, target_obj, 1)
  

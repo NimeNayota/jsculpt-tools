@@ -11,6 +11,47 @@ class FSC_PT_Panel(Panel):
     def draw(self, context):
         pass
 
+class FSC_Color_Picker_Panel(Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Color Picker"
+    bl_idname = "OBJECT_PT_color_picker"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = "JSculpt"
+ 
+    def draw(self, context): 
+
+        layout = self.layout 
+        row = layout.row()
+        row.prop(context.scene, "color", text="Color")
+
+        row = layout.row()
+        row.operator('object.fsc_ot_color_remove_add', text="New color")
+        row.operator('object.fsc_ot_fill_color', text="Fill")
+        row = layout.row()
+        row.operator("object.fsc_ot_color_brush", text="ColorBrush")
+        row = layout.row()
+        row.operator("object.fsc_color_picker", text="ColorPicker")
+
+
+
+class FSC_PT_Bool_Objects_Panel(FSC_PT_Panel, Panel):
+    bl_parent_id = "FSC_PT_Panel"
+    bl_label = "Bool objects"
+    
+    def draw(self, context): 
+
+        layout = self.layout
+
+        row = layout.row()
+        row.prop_search(context.scene, "target_object", context.scene, "objects", text="Target")
+
+        row = layout.row()
+        row.operator('object.fsc_bool_union', text='Bool Union')
+
+        row = layout.row()
+        row.operator('object.fsc_bool_diff', text='Bool Difference')
+
 class FSC_PT_Add_Objects_Panel(Panel):
     bl_parent_id = "FSC_PT_Panel"
     bl_label = "Objects"
@@ -25,17 +66,31 @@ class FSC_PT_Add_Objects_Panel(Panel):
         row.prop(context.scene, "add_object_type", text="Type")
 
         row = layout.row()
+        row.prop(context.scene, "vert_object_type", text="Pro2")
+        row.prop(context.scene, "sigm_object_type", text="Pro1")
+
+        row = layout.row()
         row.prop(context.scene, "add_scene_object", text="Scene")
 
         row = layout.row()
         row.prop(context.scene, "align_to_face", text="Align to face orientation")
 
         layout = self.layout
+
         row = layout.row()
-        row.prop(context.scene, "add_object_mirror", text="Mirror")
- 
+        row.prop_search(context.scene, "mror_target_object", context.scene, "objects", text="Mirror Object")
+
         row = layout.row()
-        row.operator('object.fsc_add_object', text="Add object mode, color use brush PaintSH")
+        row.operator('object.fsc_add_object', text="Add object mode")
+        row.operator("object.dub", text="Dubl")
+
+        row = layout.row()
+        row.operator('object.origin_set_geometry', text="Apply")
+
+
+
+
+
 
 class FSC_PT_Extract_Mask_Panel(Panel):
     bl_parent_id = "FSC_PT_Panel"
@@ -55,10 +110,11 @@ class FSC_PT_Extract_Mask_Panel(Panel):
         col.prop(context.scene, "extract_offset", text="Offset")
 
         row = layout.row()
-        row.operator('object.fsc_ot_mask_extract', text="Extract Mask, color use brush PaintSH")
+        row.operator('object.fsc_ot_mask_extract', text="Extract Mask")
 
         row = layout.row()
         row.operator('object.fsc_ot_invert_transform', text="Invert Transform")
+        row.operator("object.fsc_ot_move_transform_gizmo", text="Move Gizmo")
 
 
 class FSC_PT_Remesh_Panel(Panel):

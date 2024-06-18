@@ -18,6 +18,20 @@ class FSC_OT_Mask_Invert_Transform_Operator(Operator):
         bpy.ops.sculpt.set_pivot_position('INVOKE_DEFAULT', mode='UNMASKED')
         return {'FINISHED'}
 
+class FSC_OT_Move_Gizmo_Operator(Operator):
+    bl_idname = "object.fsc_ot_move_transform_gizmo"
+    bl_label = "move transform"
+    bl_description = "Move transform gizmo" 
+    bl_options = {'REGISTER', 'UNDO'} 
+
+    def execute(self, context):
+        to_sculpt()
+        bpy.ops.paint.mask_flood_fill(mode='VALUE', value=0)
+        bpy.ops.paint.mask_flood_fill(mode='INVERT')
+        bpy.ops.wm.tool_set_by_id(name="builtin.transform")
+        return {'FINISHED'}
+
+
 
 class FSC_OT_Mask_Extract_Operator(Operator):
     bl_idname = "object.fsc_ot_mask_extract"
@@ -28,57 +42,27 @@ class FSC_OT_Mask_Extract_Operator(Operator):
 
     def invoke(self, context, event):
 
-        target_obj = context.object
-
-        r = bpy.data.brushes["PaintSH"].color.r 
-        g = bpy.data.brushes["PaintSH"].color.g 
-        b = bpy.data.brushes["PaintSH"].color.b 
-
-        to_sculpt()
-
-        # Invert the mask and hide the masked area
-        bpy.ops.paint.mask_flood_fill(mode='INVERT')
-        bpy.ops.paint.hide_show(action='HIDE', area='MASKED')
-
-        # select the unmasked part in edit mode and duplicate it
-        to_edit()
-        select_mesh()
-        bpy.ops.mesh.duplicate_move()
-
-        # separate a new object from the selection
-        bpy.ops.mesh.separate(type='SELECTED')
-        
-        # get the new created/separated object
-        new_objs = [obj for obj in bpy.context.selected_objects if obj != bpy.context.object]
-        new_obj = new_objs[0]
-        
-
-        # unhide the target and get rid of the mask
-        to_sculpt()
-        bpy.ops.paint.hide_show(action='SHOW', area='ALL')
-        bpy.ops.paint.mask_flood_fill(mode='VALUE', value=0.0)
-
-        # make the new object the active one and extrude it with solidify
-        make_active(new_obj)
-
-        solid_mod = new_obj.modifiers.new(type="SOLIDIFY", name="FSC_SOLIDIFY")
-        solid_mod.offset = context.scene.extract_offset
-        solid_mod.use_even_offset = True
-        solid_mod.use_quality_normals = True
-        bpy.ops.geometry.color_attribute_remove()
-        bpy.ops.geometry.color_attribute_add(color=(r, g, b, 1))
+        #target_obj = context.object
+        bpy.ops.mesh.paint_mask_extract()
 
 
-        # Control the thickness with a scene variable
-        solid_mod.thickness = context.scene.extract_thickness
-        bpy.ops.object.modifier_apply(modifier=solid_mod.name)
+        r = bpy.context.scene.color.r
+        g = bpy.context.scene.color.g
+        b = bpy.context.scene.color.b
 
-        to_sculpt()
-
-        if context.scene.remesh_after_extract:
-            execute_remesh(context)
+        if not bpy.ops.geometry.color_attribute: 
+            bpy.ops.geometry.color_attribute_add(color=(r, g, b, 1))
+        elif not bpy.ops.geometry.color_attribute == True:
             bpy.ops.geometry.color_attribute_remove()
             bpy.ops.geometry.color_attribute_add(color=(r, g, b, 1))
-
-        self.report({'INFO'}, "Mask extracted")
+        
+        #smoth = bpy.context.scene.tool_settings.unified_paint_settings.size*0.01
+#bpy.context.object.modifiers["geometry_extract_solidify"].thickness = -0.22
+#bpy.context.object.modifiers["geometry_extract_solidify"].offset = -0.74026
+#bpy.context.scene.bevel_depth = 0.09
+#bpy.context.scene.loop_cuts = 16
+        to_sculpt()
+#bpy.context.object.modifiers["geometry_extract_solidify"].thickness = -0.22
+#bpy.context.object.modifiers["geometry_extract_solidify"].offset = -0.74026
+        #self.report({'INFO'}, "Mask extracted")
         return {'FINISHED'}

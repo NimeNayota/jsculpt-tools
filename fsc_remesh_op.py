@@ -6,6 +6,8 @@ from bpy.props import BoolProperty
 from . utils.fsc_bool_util import *
 from . utils.fsc_retopo_utils import *
 
+
+
 class FSC_OT_Remesh_Operator(Operator):
     bl_idname = "object.fsc_remesh"
     bl_label = "Remesh"
@@ -21,6 +23,8 @@ class FSC_OT_Remesh_Operator(Operator):
             for modifier in sel_object.modifiers:
                 if modifier.type == "MIRROR":
                     bpy.ops.object.modifier_apply(modifier=modifier.name)
+                    bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
+
 
         if self.join_b4_remesh:
             bpy.ops.object.join()
