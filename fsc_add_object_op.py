@@ -410,6 +410,7 @@ class FSC_OT_Origin_Set_GEOMETRY_Operator(Operator):
         #to_sculpt()
         bpy.ops.object.convert(target='MESH')
         bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
+        return {'FINISHED'}
 
 class FSC_OT_Object_Dub_Operator(Operator):
     bl_idname = "object.dub"
