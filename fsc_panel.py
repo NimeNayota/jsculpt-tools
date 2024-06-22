@@ -1,5 +1,6 @@
 import bpy
 from bpy.types import Panel
+from bpy.types import Menu
 
 
 class FSC_PT_Panel(Panel):
@@ -10,6 +11,7 @@ class FSC_PT_Panel(Panel):
     
     def draw(self, context):
         pass
+
 
 class FSC_Color_Picker_Panel(Panel):
     """Creates a Panel in the Object properties window"""
@@ -29,8 +31,6 @@ class FSC_Color_Picker_Panel(Panel):
         row.operator('object.fsc_ot_color_remove_add', text="New color")
         row.operator('object.fsc_ot_fill_color', text="Fill")
         row = layout.row()
-        row.operator("object.fsc_ot_color_brush", text="ColorBrush")
-        row = layout.row()
         row.operator("object.fsc_color_picker", text="ColorPicker")
 
 
@@ -49,8 +49,8 @@ class FSC_PT_Bool_Objects_Panel(FSC_PT_Panel, Panel):
         row = layout.row()
         row.operator('object.fsc_bool_union', text='Bool Union')
 
-        row = layout.row()
         row.operator('object.fsc_bool_diff', text='Bool Difference')
+
 
 class FSC_PT_Add_Objects_Panel(Panel):
     bl_parent_id = "FSC_PT_Panel"
@@ -74,8 +74,6 @@ class FSC_PT_Add_Objects_Panel(Panel):
 
         row = layout.row()
         row.prop(context.scene, "align_to_face", text="Align to face orientation")
-
-        layout = self.layout
 
         row = layout.row()
         row.prop_search(context.scene, "mror_target_object", context.scene, "objects", text="Mirror Object")

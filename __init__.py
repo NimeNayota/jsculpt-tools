@@ -1,20 +1,20 @@
 bl_info = {
-    "name" : "JSculpt Tools",
+    "name" : "JSculpt Tools Mod",
     "author" : "jayanam",
-    "description" : "Sculpting tools for Blender 2.8 - 3.x",
-    "blender" : (2, 80, 0),
-    "version" : (4, 0, 0, 1),
+    "description" : "Sculpting tools for Blender 4.1 - 4.3",
+    "blender" : (4, 1, 0),
+    "version" : (4, 0, 1, 5),
     "location" : "View3D",
     "warning" : "",
     "category" : "Object"
 }
-
 import bpy
 from bpy.props import *
 
 from . fsc_panel import *
 from . fsc_bool_op import *
 from . fsc_mask_op import *
+from . fsc_color_op import *
 from . fsc_remesh_op import *
 from . fsc_add_object_op import *
 from . fsc_select_op import *
@@ -28,7 +28,13 @@ from . fsc_retopo_ring_op import *
 
 # Global properties
 bpy.types.WindowManager.in_modal_mode = BoolProperty(name="Modal Mode",
+
                                         default = False)
+
+bpy.types.WindowManager.in_modal_mode = BoolProperty(name="Modal Mode",
+                                        default = False)
+
+
 
 add_object_mirror = [("None",    "None",  "", 0),
                      ("X",       "X",     "", 1),
@@ -38,6 +44,8 @@ add_object_mirror = [("None",    "None",  "", 0),
 
 # Scene properties
 bpy.types.Scene.target_object = PointerProperty(type=bpy.types.Object)
+
+bpy.types.Scene.mror_target_object = PointerProperty(type=bpy.types.Object)
 
 bpy.types.Scene.retopo_object = PointerProperty(type=bpy.types.Object)
 
@@ -73,6 +81,15 @@ bpy.types.Scene.remesh_after_extract  = BoolProperty(name="Remesh after extract"
                                       description="Remesh the mesh after mask extraction",
                                       default = True)
 
+bpy.types.Scene.color = bpy.props.FloatVectorProperty(
+        name="Color",
+        subtype='COLOR',
+        size=3,
+        min=0.0,
+        max=1.0,
+        default=(1.0, 1.0, 1.0)
+    )
+
 bpy.types.Scene.add_retopo_mirror = bpy.props.EnumProperty(items=add_object_mirror, 
                                                         name="Retopo Mirror",
                                                         default="None") 
@@ -80,19 +97,60 @@ bpy.types.Scene.add_retopo_mirror = bpy.props.EnumProperty(items=add_object_mirr
 add_object_types = [ ("Sphere",    "Sphere",   "", 0),
                      ("Plane",     "Plane",    "", 1),
                      ("Cube",      "Cube",     "", 2),
-                     ("Cylinder",  "Cylinder", "", 3),
-                     ("Torus",     "Torus",    "", 4),
-                     ("Cone",      "Cone",     "", 5),
-                     ("Icosphere", "Icosphere","", 6),
-                     ("Scene",     "Scene",    "", 7),      
+                     ("CubeS",      "CubeS",     "", 3),
+                     ("CubeC",      "CubeC",     "", 4),
+                     ("Cylinder",  "Cylinder", "", 5),
+                     ("CylinderX",  "CylinderX", "", 6),
+                     ("Torus",     "Torus",    "", 7),
+                     ("TorusI",     "TorusI",    "", 8),
+                     ("TorusX",     "TorusX",    "", 9),
+                     ("Cone",      "Cone",     "", 10),
+                     ("ConeX",      "ConeX",     "", 11),
+                     ("Icosphere", "Icosphere","", 12),
+                     ("Grid", "Grid","", 13),
+                     ("Circle", "Circle","", 14),
+                     ("Ring", "Ring","", 15),
+                     ("Scene",     "Scene",    "", 16),      
                   ]
 
-# Scene properties
+vert_object_types = [ ("3",    "3",   "", 0),
+                     ("4",     "4",    "", 1),
+                     ("5",     "5",    "", 2),
+                     ("6",     "6",    "", 3),
+                     ("8",     "8",    "", 4),
+                     ("12",     "12",    "", 5),
+                     ("24",     "24",    "", 6),
+                     ("32",     "32",    "", 7),
+                     ("48",     "48",    "", 8),
+                  ]
+
+sigm_object_types = [ ("3",    "3",   "", 0),
+                     ("4",     "4",    "", 1),
+                     ("5",     "5",    "", 2),
+                     ("6",     "6",    "", 3),
+                     ("8",     "8",    "", 4),
+                     ("14",     "14",    "", 5),
+                     ("24",     "24",    "", 6),
+                     ("32",     "32",    "", 7),
+                     ("48",     "48",    "", 8),
+                  ]
+
+
+# Scene properties context.scene.size_metod
 bpy.types.WindowManager.in_draw_mode = BoolProperty(name="Draw Mode", default = False)
 
 bpy.types.Scene.add_object_type = bpy.props.EnumProperty(items=add_object_types, 
                                                         name="Add Object",
                                                         default="Sphere")
+
+bpy.types.Scene.vert_object_type = bpy.props.EnumProperty(items=vert_object_types, 
+                                                        name="Add Vert",
+                                                        default="24")
+bpy.types.Scene.sigm_object_type = bpy.props.EnumProperty(items=sigm_object_types, 
+                                                        name="Add Sigm",
+                                                        default="24")
+
+
 
 bpy.types.Scene.add_object_mirror = bpy.props.EnumProperty(items=add_object_mirror, 
                                                         name="Add Object Mirror",
@@ -102,13 +160,15 @@ bpy.types.Scene.add_scene_object = PointerProperty(type=bpy.types.Object)
 
 addon_keymaps = []
 
-classes = ( FSC_PT_Panel, FSC_PT_Add_Objects_Panel, FSC_PT_Extract_Mask_Panel, 
-            FSC_PT_Remesh_Panel, FSC_PT_Retopo_Panel, FSC_OT_BoolOperator_Union, 
+
+classes = ( FSC_PT_Panel,FSC_PT_Bool_Objects_Panel, FSC_PT_Add_Objects_Panel, FSC_PT_Extract_Mask_Panel, 
+            FSC_PT_Remesh_Panel, FSC_PT_Retopo_Panel, FSC_Color_Picker_Panel, FSC_OT_BoolOperator_Union, 
             FSC_OT_BoolOperator_Difference, FSC_OT_Mask_Extract_Operator, FSC_OT_Mask_Invert_Transform_Operator,
             FSC_OT_Remesh_Operator, FSC_OT_Add_Oject_Operator, FSC_OT_Select_Operator,
             FSC_AddonPreferences, FSC_OT_Draw_Mode_Operator, FSC_OT_Subsurf_Operator, FSC_OT_Shrinkwrap_Operator,
             FSC_OT_Solidify_Operator, FSC_OT_FlipNormals_Operator, FSC_OT_ApplyAllModifiersOperator,
-            FSC_OT_Retopo_Ring_Operator)
+            FSC_OT_Retopo_Ring_Operator, FSC_OT_Color_add_And_Remove_Operator, FSC_OT_fill_Color_Operator, FSC_OT_Origin_Set_GEOMETRY_Operator, FSC_Color_Picker_Operator,
+            FSC_OT_Object_Dub_Operator, FSC_OT_Move_Gizmo_Operator )
 
 def register():
     for c in classes:

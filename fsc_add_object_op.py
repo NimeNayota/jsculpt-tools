@@ -293,14 +293,6 @@ class FSC_OT_Add_Oject_Operator(Operator):
                 deselect_all()
                 make_active(custom_obj)
 
-                if not bpy.ops.geometry.color_attribute: 
-#                    bpy.context.object.data.attributes["Color"]
-#                    bpy.ops.geometry.color_attribute_add(name="Color")
-                    bpy.ops.geometry.color_attribute_add(color=(r, g, b, 1))
-                elif not bpy.ops.geometry.color_attribute == True:
-                    bpy.ops.geometry.color_attribute_remove()
-                    bpy.ops.geometry.color_attribute_add(color=(r, g, b, 1))
-
                 bpy.context.object.scale[0] = obj_size
                 bpy.context.object.scale[1] = obj_size
                 bpy.context.object.scale[2] = obj_size
@@ -410,6 +402,7 @@ class FSC_OT_Origin_Set_GEOMETRY_Operator(Operator):
         #to_sculpt()
         bpy.ops.object.convert(target='MESH')
         bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
+
         return {'FINISHED'}
 
 class FSC_OT_Object_Dub_Operator(Operator):
