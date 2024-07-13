@@ -14,6 +14,7 @@ from . utils.fsc_common_utils import get_axis_no
 from . utils.textutils import *
 
 
+
 class FSC_OT_Add_Oject_Operator(Operator):
     bl_idname = "object.fsc_add_object"
     bl_label = "Add object"
@@ -102,7 +103,11 @@ class FSC_OT_Add_Oject_Operator(Operator):
             return view_layer 
 
     def add_object(self, context, mouse_pos):
-        
+        if context.scene.join_and_mask_fill:
+            bpy.ops.paint.mask_flood_fill(mode='VALUE', value=1)
+
+        old_name = bpy.context.object.name
+
         scene = context.scene
         mode = get_mode()
 
@@ -133,7 +138,6 @@ class FSC_OT_Add_Oject_Operator(Operator):
 
         obj_size_s = 0.02 * bpy.context.scene.tool_settings.unified_paint_settings.size
 
-        mror_target_obj = bpy.context.scene.mror_target_object
         
 
         vert = 3
@@ -315,7 +319,6 @@ class FSC_OT_Add_Oject_Operator(Operator):
 
 #        if bpy.context.object.data.use_mirror_x == True:
         if BrushMir or BrushMir2 or BrushMir3 != "s":
-            obj_name = mror_target_obj.name
 
             active_obj = bpy.context.active_object
 
@@ -339,57 +342,66 @@ class FSC_OT_Add_Oject_Operator(Operator):
             if BrushMir3 == "Z":
                 mirror_mod.use_axis[get_axis_no(BrushMir3)] = True
 
-            mirror_mod.mirror_object = bpy.data.objects[obj_name]
-
-            bpy.context.scene.cursor.location = old_loc
+            mirror_mod.mirror_object = bpy.data.objects[old_name]
 
         to_mode(mode)
 
-        if bpy.context.object.modifiers["FSC_MIRROR"].use_axis[0] ==  True:#0 = x, 1 = y, 2 = z
-            bpy.context.object.data.use_mirror_x = True
+        if context.scene.join_and_mask_fill:
+            if bpy.context.object.modifiers["FSC_MIRROR"].use_axis[0] ==  True:#0 = x, 1 = y, 2 = z
+                bpy.context.object.data.use_mirror_x = True
 
-            bpy.context.object.data.use_mirror_y = False
-            bpy.context.object.data.use_mirror_z = False
-            if bpy.context.object.modifiers["FSC_MIRROR"].use_axis[1] ==  True:
+                bpy.context.object.data.use_mirror_y = False
+                bpy.context.object.data.use_mirror_z = False
+                if bpy.context.object.modifiers["FSC_MIRROR"].use_axis[1] ==  True:
+                    bpy.context.object.data.use_mirror_y = True
+
+                    bpy.context.object.data.use_mirror_z = False
+
+                    if bpy.context.object.modifiers["FSC_MIRROR"].use_axis[2] ==  True:
+                        bpy.context.object.data.use_mirror_z = True
+
+                elif bpy.context.object.modifiers["FSC_MIRROR"].use_axis[2] ==  True:
+                    bpy.context.object.data.use_mirror_z = True
+
+                    bpy.context.object.data.use_mirror_y = False
+
+            elif bpy.context.object.modifiers["FSC_MIRROR"].use_axis[1] ==  True:#0 = x, 1 = y, 2 = z
                 bpy.context.object.data.use_mirror_y = True
 
+                bpy.context.object.data.use_mirror_x = False
                 bpy.context.object.data.use_mirror_z = False
-
                 if bpy.context.object.modifiers["FSC_MIRROR"].use_axis[2] ==  True:
                     bpy.context.object.data.use_mirror_z = True
 
-            elif bpy.context.object.modifiers["FSC_MIRROR"].use_axis[2] ==  True:
-                bpy.context.object.data.use_mirror_z = True
+                    bpy.context.object.data.use_mirror_x = False
 
-                bpy.context.object.data.use_mirror_y = False
-
-        elif bpy.context.object.modifiers["FSC_MIRROR"].use_axis[1] ==  True:#0 = x, 1 = y, 2 = z
-            bpy.context.object.data.use_mirror_y = True
-
-            bpy.context.object.data.use_mirror_x = False
-            bpy.context.object.data.use_mirror_z = False
-            if bpy.context.object.modifiers["FSC_MIRROR"].use_axis[2] ==  True:
+            elif bpy.context.object.modifiers["FSC_MIRROR"].use_axis[2] ==  True:#0 = x, 1 = y, 2 = z
                 bpy.context.object.data.use_mirror_z = True
 
                 bpy.context.object.data.use_mirror_x = False
+                bpy.context.object.data.use_mirror_y = False
 
-        elif bpy.context.object.modifiers["FSC_MIRROR"].use_axis[2] ==  True:#0 = x, 1 = y, 2 = z
-            bpy.context.object.data.use_mirror_z = True
+            bpy.ops.object.convert(target='MESH')
+            #bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
+            #bpy.ops.object.origin_set(type='ORIGIN_CENTER_OF_MASS', center='BOUNDS')
+            #bpy.ops.object.origin_set(type='ORIGIN_CENTER_OF_MASS', center='MEDIAN')
+            #bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='BOUNDS')
 
-            bpy.context.object.data.use_mirror_x = False
-            bpy.context.object.data.use_mirror_y = False
+            bpy.data.objects[old_name].select_set(True)
+            bpy.ops.object.join()
 
+            #bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
+            #bpy.ops.object.origin_set(type='ORIGIN_CENTER_OF_MASS', center='BOUNDS')
 
+            bpy.ops.object.origin_set(type='ORIGIN_CENTER_OF_MASS', center='MEDIAN')
 
-        #if bpy.context.object.modifiers["FSC_MIRROR"].use_axis[0] == False:
-            #bpy.context.object.data.use_mirror_x = False
+            #bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='BOUNDS')
+
+            bpy.ops.sculpt.face_sets_init(mode='UV_SEAMS')#bpy.ops.sculpt.face_sets_create(mode='MASKED')
+            bpy.ops.sculpt.set_pivot_position(mode='UNMASKED')
 
         bpy.ops.wm.tool_set_by_id(name="builtin.scale")
 
-        #if  mirror != "None":
-            #bpy.ops.object.modifier_apply(modifier=modifier.name)
-            #bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
-            #bpy.ops.object.join(bpy.data.objects[obj_name])
 
 
 class FSC_OT_Origin_Set_GEOMETRY_Operator(Operator):
@@ -399,27 +411,101 @@ class FSC_OT_Origin_Set_GEOMETRY_Operator(Operator):
     bl_options = {'REGISTER', 'UNDO'} 
 
     def execute(self, context):
-        #to_sculpt()
-        bpy.ops.object.convert(target='MESH')
-        bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
+        bpy.ops.sculpt.sculptmode_toggle()
+        obj = bpy.context.object
+        if obj.modifiers:
+            if bpy.context.object.modifiers["FSC_MIRROR"].use_axis[0] ==  True:#0 = x, 1 = y, 2 = z
+                bpy.context.object.data.use_mirror_x = True
 
+                bpy.context.object.data.use_mirror_y = False
+                bpy.context.object.data.use_mirror_z = False
+                if bpy.context.object.modifiers["FSC_MIRROR"].use_axis[1] ==  True:
+                    bpy.context.object.data.use_mirror_y = True
+
+                    bpy.context.object.data.use_mirror_z = False
+
+                    if bpy.context.object.modifiers["FSC_MIRROR"].use_axis[2] ==  True:
+                        bpy.context.object.data.use_mirror_z = True
+
+                elif bpy.context.object.modifiers["FSC_MIRROR"].use_axis[2] ==  True:
+                    bpy.context.object.data.use_mirror_z = True
+
+                    bpy.context.object.data.use_mirror_y = False
+
+            elif bpy.context.object.modifiers["FSC_MIRROR"].use_axis[1] ==  True:#0 = x, 1 = y, 2 = z
+                bpy.context.object.data.use_mirror_y = True
+
+                bpy.context.object.data.use_mirror_x = False
+                bpy.context.object.data.use_mirror_z = False
+                if bpy.context.object.modifiers["FSC_MIRROR"].use_axis[2] ==  True:
+                    bpy.context.object.data.use_mirror_z = True
+
+                    bpy.context.object.data.use_mirror_x = False
+
+            elif bpy.context.object.modifiers["FSC_MIRROR"].use_axis[2] ==  True:#0 = x, 1 = y, 2 = z
+                bpy.context.object.data.use_mirror_z = True
+
+                bpy.context.object.data.use_mirror_x = False
+                bpy.context.object.data.use_mirror_y = False
+
+            bpy.ops.object.convert(target='MESH')
+            bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
+
+            bpy.ops.sculpt.sculptmode_toggle()
+        
         return {'FINISHED'}
+
+execute_counter = 0 
+
+
+
 
 class FSC_OT_Object_Dub_Operator(Operator):
     bl_idname = "object.dub"
     bl_label = "object dub"
     bl_description = "object dub" 
     bl_options = {'REGISTER', 'UNDO'} 
-
+    
     def execute(self, context):
-        #to_sculpt()
+        to_sculpt()
         C = bpy.context
         src_obj = bpy.context.active_object
+        old_name = bpy.context.object.name
 
-        for i in range (0,1):
-            new_obj = src_obj.copy()
-            new_obj.data = src_obj.data.copy()
-            new_obj.animation_data_clear()
-            C.collection.objects.link(new_obj)
+        if context.scene.join_and_mask_fill:
+            
+            #bpy.ops.paint.mask_flood_fill(mode='VALUE', value=1)
+            bpy.ops.sculpt.face_sets_create(mode='MASKED')
+            bpy.ops.mesh.paint_mask_extract(add_boundary_loop=False, smooth_iterations=0, apply_shrinkwrap=False, add_solidify=False)
+            bpy.data.objects[old_name].select_set(True)
+            bpy.ops.object.join()
+
+        else:
+            for i in range (0,1):
+                new_obj = src_obj.copy()
+                new_obj.data = src_obj.data.copy()
+                new_obj.animation_data_clear()
+                C.collection.objects.link(new_obj)
+        bpy.ops.sculpt.sculptmode_toggle()
         return {'FINISHED'}
+class FSC_OT_Object_Subb_Level_UP_Operator(Operator):
+    bl_idname = "object.subb_level_up"
+    bl_label = "subb_level_up"
+    bl_description = "Move subb_level_up" 
+    bl_options = {'REGISTER', 'UNDO'} 
+
+    def execute(self, context):
+        bpy.context.object.modifiers["Multires"].sculpt_levels += 1
+        return {'FINISHED'}
+
+class FSC_OT_Object_Subb_Level_DOWN_Operator(Operator):
+    bl_idname = "object.subb_level_down"
+    bl_label = "subb_level_down"
+    bl_description = "Move subb level down" 
+    bl_options = {'REGISTER', 'UNDO'} 
+
+    def execute(self, context):
+        bpy.context.object.modifiers["Multires"].sculpt_levels -= 1
+        return {'FINISHED'}
+
 

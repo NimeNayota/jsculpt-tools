@@ -74,9 +74,7 @@ class FSC_PT_Add_Objects_Panel(Panel):
 
         row = layout.row()
         row.prop(context.scene, "align_to_face", text="Align to face orientation")
-
-        row = layout.row()
-        row.prop_search(context.scene, "mror_target_object", context.scene, "objects", text="Mirror Object")
+        row.prop(context.scene, "join_and_mask_fill", text="ZL")
 
         row = layout.row()
         row.operator('object.fsc_add_object', text="Add object mode")
@@ -84,7 +82,10 @@ class FSC_PT_Add_Objects_Panel(Panel):
 
         row = layout.row()
         row.operator('object.origin_set_geometry', text="Apply")
-
+        row = layout.row()
+        row = layout.row()
+        row.operator("object.subb_level_up", text="Subd Up")
+        row.operator("object.subb_level_down", text="Subd Down")
 
 
 

@@ -26,8 +26,7 @@ class FSC_OT_Move_Gizmo_Operator(Operator):
 
     def execute(self, context):
         to_sculpt()
-        bpy.ops.paint.mask_flood_fill(mode='VALUE', value=0)
-        bpy.ops.paint.mask_flood_fill(mode='INVERT')
+        bpy.ops.paint.mask_flood_fill(mode='VALUE', value=1)
         bpy.ops.wm.tool_set_by_id(name="builtin.transform")
         return {'FINISHED'}
 
