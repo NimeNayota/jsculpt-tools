@@ -90,7 +90,6 @@ class FSC_OT_Add_Oject_Operator(Operator):
             return {'FINISHED'}
 
         if event.value == "PRESS" and event.type == "LEFTMOUSE" and event.shift:
-#        if event.value == "PRESS" and event.type == "LEFTMOUSE" and event.ctrl:
             mouse_pos = (event.mouse_region_x, event.mouse_region_y)
             self.add_object(context, mouse_pos)
 
@@ -104,6 +103,7 @@ class FSC_OT_Add_Oject_Operator(Operator):
 
     def add_object(self, context, mouse_pos):
         if context.scene.join_and_mask_fill:
+
             bpy.ops.paint.mask_flood_fill(mode='VALUE', value=1)
 
         old_name = bpy.context.object.name
@@ -131,6 +131,10 @@ class FSC_OT_Add_Oject_Operator(Operator):
             
             if context.scene.align_to_face:
                 rot = z.rotation_difference( norm ).to_euler()
+
+
+        active_obj = bpy.context.active_object
+        old_loc = active_obj.location.copy()
 
         obj_type = context.scene.add_object_type
         #size object
@@ -314,15 +318,11 @@ class FSC_OT_Add_Oject_Operator(Operator):
                 bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
                 
         
-        #mirror = context.scene.add_object_mirror
 
-
-#        if bpy.context.object.data.use_mirror_x == True:
         if BrushMir or BrushMir2 or BrushMir3 != "s":
 
-            active_obj = bpy.context.active_object
+            active_obj_m = bpy.context.active_object
 
-            old_loc = active_obj.location.copy()
 
 
             bpy.context.scene.cursor.location = (0.0, 0.0, 0.0)
@@ -333,7 +333,7 @@ class FSC_OT_Add_Oject_Operator(Operator):
 
             bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
     
-            mirror_mod = active_obj.modifiers.new(type="MIRROR", name="FSC_MIRROR")
+            mirror_mod = active_obj_m.modifiers.new(type="MIRROR", name="FSC_MIRROR")
             mirror_mod.use_axis[0] = False
             if BrushMir == "X":
                 mirror_mod.use_axis[get_axis_no(BrushMir)] = True
@@ -381,23 +381,20 @@ class FSC_OT_Add_Oject_Operator(Operator):
                 bpy.context.object.data.use_mirror_x = False
                 bpy.context.object.data.use_mirror_y = False
 
+
+
             bpy.ops.object.convert(target='MESH')
-            #bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
-            #bpy.ops.object.origin_set(type='ORIGIN_CENTER_OF_MASS', center='BOUNDS')
-            #bpy.ops.object.origin_set(type='ORIGIN_CENTER_OF_MASS', center='MEDIAN')
-            #bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='BOUNDS')
 
             bpy.data.objects[old_name].select_set(True)
             bpy.ops.object.join()
 
-            #bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
-            #bpy.ops.object.origin_set(type='ORIGIN_CENTER_OF_MASS', center='BOUNDS')
+            bpy.context.scene.cursor.location = old_loc
 
-            bpy.ops.object.origin_set(type='ORIGIN_CENTER_OF_MASS', center='MEDIAN')
+            bpy.ops.object.origin_set(type='ORIGIN_CURSOR', center='MEDIAN')
 
-            #bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='BOUNDS')
 
-            bpy.ops.sculpt.face_sets_init(mode='UV_SEAMS')#bpy.ops.sculpt.face_sets_create(mode='MASKED')
+
+            bpy.ops.sculpt.face_sets_init(mode='UV_SEAMS')
             bpy.ops.sculpt.set_pivot_position(mode='UNMASKED')
 
         bpy.ops.wm.tool_set_by_id(name="builtin.scale")
@@ -474,7 +471,6 @@ class FSC_OT_Object_Dub_Operator(Operator):
 
         if context.scene.join_and_mask_fill:
             
-            #bpy.ops.paint.mask_flood_fill(mode='VALUE', value=1)
             bpy.ops.sculpt.face_sets_create(mode='MASKED')
             bpy.ops.mesh.paint_mask_extract(add_boundary_loop=False, smooth_iterations=0, apply_shrinkwrap=False, add_solidify=False)
             bpy.data.objects[old_name].select_set(True)
