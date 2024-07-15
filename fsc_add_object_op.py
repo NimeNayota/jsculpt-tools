@@ -475,6 +475,7 @@ class FSC_OT_Object_Dub_Operator(Operator):
             bpy.ops.mesh.paint_mask_extract(add_boundary_loop=False, smooth_iterations=0, apply_shrinkwrap=False, add_solidify=False)
             bpy.data.objects[old_name].select_set(True)
             bpy.ops.object.join()
+            bpy.ops.sculpt.sculptmode_toggle()
 
         else:
             for i in range (0,1):
@@ -482,7 +483,8 @@ class FSC_OT_Object_Dub_Operator(Operator):
                 new_obj.data = src_obj.data.copy()
                 new_obj.animation_data_clear()
                 C.collection.objects.link(new_obj)
-        bpy.ops.sculpt.sculptmode_toggle()
+                #
+                bpy.ops.paint.mask_flood_fill(mode='VALUE', value=0)
         return {'FINISHED'}
 class FSC_OT_Object_Subd_Level_UP_Operator(Operator):
     bl_idname = "object.subd_level_up"
