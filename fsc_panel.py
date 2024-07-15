@@ -84,8 +84,8 @@ class FSC_PT_Add_Objects_Panel(Panel):
         row.operator('object.origin_set_geometry', text="Apply")
         row = layout.row()
         row = layout.row()
-        row.operator("object.subb_level_up", text="Subd Up")
-        row.operator("object.subb_level_down", text="Subd Down")
+        row.operator("object.subd_level_up", text="Subd Up")
+        row.operator("object.subd_level_down", text="Subd Down")
 
 
 

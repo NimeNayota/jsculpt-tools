@@ -484,20 +484,20 @@ class FSC_OT_Object_Dub_Operator(Operator):
                 C.collection.objects.link(new_obj)
         bpy.ops.sculpt.sculptmode_toggle()
         return {'FINISHED'}
-class FSC_OT_Object_Subb_Level_UP_Operator(Operator):
-    bl_idname = "object.subb_level_up"
-    bl_label = "subb_level_up"
-    bl_description = "Move subb_level_up" 
+class FSC_OT_Object_Subd_Level_UP_Operator(Operator):
+    bl_idname = "object.subd_level_up"
+    bl_label = "Multires_level_up"
+    bl_description = "Multires level up, Without the modifier multires does not work" 
     bl_options = {'REGISTER', 'UNDO'} 
 
     def execute(self, context):
         bpy.context.object.modifiers["Multires"].sculpt_levels += 1
         return {'FINISHED'}
 
-class FSC_OT_Object_Subb_Level_DOWN_Operator(Operator):
-    bl_idname = "object.subb_level_down"
-    bl_label = "subb_level_down"
-    bl_description = "Move subb level down" 
+class FSC_OT_Object_Subd_Level_DOWN_Operator(Operator):
+    bl_idname = "object.subd_level_down"
+    bl_label = "multires_level_down"
+    bl_description = "Multires level down, Without the modifier multires does not work" 
     bl_options = {'REGISTER', 'UNDO'} 
 
     def execute(self, context):

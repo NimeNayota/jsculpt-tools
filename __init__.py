@@ -170,7 +170,7 @@ classes = ( FSC_PT_Panel,FSC_PT_Bool_Objects_Panel, FSC_PT_Add_Objects_Panel, FS
             FSC_AddonPreferences, FSC_OT_Draw_Mode_Operator, FSC_OT_Subsurf_Operator, FSC_OT_Shrinkwrap_Operator,
             FSC_OT_Solidify_Operator, FSC_OT_FlipNormals_Operator, FSC_OT_ApplyAllModifiersOperator,
             FSC_OT_Retopo_Ring_Operator, FSC_OT_Color_add_And_Remove_Operator, FSC_OT_fill_Color_Operator, FSC_OT_Origin_Set_GEOMETRY_Operator, FSC_Color_Picker_Operator,
-            FSC_OT_Object_Dub_Operator, FSC_OT_Object_Subb_Level_UP_Operator, FSC_OT_Object_Subb_Level_DOWN_Operator, FSC_OT_Move_Gizmo_Operator )
+            FSC_OT_Object_Dub_Operator, FSC_OT_Object_Subd_Level_UP_Operator, FSC_OT_Object_Subd_Level_DOWN_Operator, FSC_OT_Move_Gizmo_Operator )
 
 def register():
     for c in classes:
