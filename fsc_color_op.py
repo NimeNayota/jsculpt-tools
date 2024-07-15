@@ -9,7 +9,7 @@ class FSC_Color_Picker_Operator(Operator):
 
     bl_idname = "object.fsc_color_picker"
     bl_label = "Color_picker"
-    bl_description = "Color Picker" 
+    bl_description = "Color Picker, Not working yet" 
     bl_options = {'REGISTER', 'UNDO'} 
 
     def execute(self, context):
@@ -56,7 +56,7 @@ class FSC_Color_Brush_Operator(Operator):
 
 
 
-class FSC_OT_Color_add_And_Remove_Operator(Operator):
+class FSC_OT_Color_Add_And_Remove_Operator(Operator):
     bl_idname = "object.fsc_ot_color_remove_add"
     bl_label = "Color_Remove Add"
     bl_description = "Color attribute remove and add" 
@@ -79,10 +79,10 @@ class FSC_OT_Color_add_And_Remove_Operator(Operator):
 
 
 
-class FSC_OT_fill_Color_Operator(Operator):
+class FSC_OT_Fill_Color_Operator(Operator):
     bl_idname = "object.fsc_ot_fill_color"
     bl_label = "Color_Fiil"
-    bl_description = "Color attribute remove and add" 
+    bl_description = "uses a color filter" 
     bl_options = {'REGISTER', 'UNDO'} 
 
     def execute(self, context):
